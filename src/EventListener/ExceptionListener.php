@@ -24,9 +24,7 @@ class ExceptionListener
         // Customize your response object to display the exception details
         $response = new JsonResponse();
         $response->setJson(json_encode(['error' => $message], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-        // the exception message can contain unfiltered user input;
-        // set the content-type to text to avoid XSS issues
-        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
+
 
         // HttpExceptionInterface is a special type of exception that
         // holds status code and header details
@@ -37,6 +35,7 @@ class ExceptionListener
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
         // sends the modified response object to the event
         $event->setResponse($response);
     }

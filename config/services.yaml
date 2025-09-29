@@ -25,3 +25,29 @@ services:
 
     App\EventListener\ExceptionListener:
         tags: [ kernel.event_listener ]
+
+    Systemeio\TestForCandidates\PaymentProcessor\PaypalPaymentProcessor:
+        public: true
+        autowire: true
+        autoconfigure: true
+
+    Systemeio\TestForCandidates\PaymentProcessor\StripePaymentProcessor:
+        public: true
+        autowire: true
+        autoconfigure: true
+
+    # Register adapters for payment processors
+    App\Service\Adapter\PaypalPaymentProcessorAdapter:
+        arguments:
+            $paypalProcessor: '@Systemeio\TestForCandidates\PaymentProcessor\PaypalPaymentProcessor'
+
+    App\Service\Adapter\StripePaymentProcessorAdapter:
+        arguments:
+            $stripeProcessor: '@Systemeio\TestForCandidates\PaymentProcessor\StripePaymentProcessor'
+
+    # Register payment service with adapters
+    App\Service\PaymentService:
+        arguments:
+            $processors:
+                - '@App\Service\Adapter\PaypalPaymentProcessorAdapter'
+                - '@App\Service\Adapter\StripePaymentProcessorAdapter'

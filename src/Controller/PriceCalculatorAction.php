@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Dto\CalculatePriceRequest;
+use App\Service\Interface\PriceCalculatorInterface;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\Property;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PriceCalculatorAction extends AbstractController
 {
     public function __construct(
+        private PriceCalculatorInterface $priceCalculator
     ) {
     }
 
@@ -40,7 +44,7 @@ class PriceCalculatorAction extends AbstractController
                 description: 'Successfully calculated price',
                 content: new OA\JsonContent(
                     properties: [
-                        new Property(property: 'price', type: 'number', format: 'float', example: 101.15),
+                        new Property(property: 'price', type: 'number', format: 'float', example: '101.15'),
                         new Property(property: 'currency', type: 'string', example: 'EUR')
                     ]
                 )
@@ -58,6 +62,9 @@ class PriceCalculatorAction extends AbstractController
     )]
     public function calculatePrice(#[MapRequestPayload] CalculatePriceRequest $dto): JsonResponse
     {
-        return $this->json($dto);
+        $price = $this->priceCalculator->calculatePrice($dto->product, $dto->taxNumber, $dto->couponCode);
+
+        $price = number_format($price / 100, 2); //convert from minor to major units
+        return $this->json((array) $dto + ['price' => $price]);
     }
 }

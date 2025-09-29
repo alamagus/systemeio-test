@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataFixtures;
 
 use App\Entity\Coupon;
@@ -12,18 +14,23 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+        //disable autoincrement of ID, otherwise it's quite inconvenient to test
+        $metadata = $manager->getClassMetaData(Product::class);
+        $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
+
         $products = [
-            ['name' => 'Iphone', 'price' => 10000],      // 100 euros in cents
-            ['name' => 'Наушники', 'price' => 2000],     // 20 euros in cents
-            ['name' => 'Чехол', 'price' => 1000],        // 10 euros in cents
+            ['id' => 1, 'name' => 'Iphone', 'price' => 10000],      // 100 euros in cents
+            ['id' => 2, 'name' => 'Наушники', 'price' => 2000],     // 20 euros in cents
+            ['id' => 3, 'name' => 'Чехол', 'price' => 1000],        // 10 euros in cents
         ];
 
         foreach ($products as $productData) {
             $existingProduct = $manager->getRepository(Product::class)
-                ->findOneBy(['name' => $productData['name']]);
+                ->find($productData['id']);
 
             if (!$existingProduct) {
                 $product = new Product();
+                $product->setId($productData['id']);
                 $product->setName($productData['name']);
                 $product->setPrice($productData['price']);
                 $manager->persist($product);

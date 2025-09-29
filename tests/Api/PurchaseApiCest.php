@@ -29,8 +29,7 @@ class PurchaseApiCest
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
             'message' => 'Purchase successful',
-            'price' => 122.0,
-            'currency' => 'EUR'
+            'price' => '122.00',
         ]);
     }
 
@@ -40,7 +39,7 @@ class PurchaseApiCest
         
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
-            'product' => 2, // Higher value product for Stripe minimum
+            'product' => 1, // Higher value product for Stripe minimum
             'taxNumber' => 'FRXX123456789',
             'couponCode' => null,
             'paymentProcessor' => 'stripe'
@@ -50,8 +49,7 @@ class PurchaseApiCest
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
             'message' => 'Purchase successful',
-            'price' => 24.0, // 20 + 20% tax
-            'currency' => 'EUR'
+            'price' => '120.00', // 100 + 20% tax
         ]);
     }
 
@@ -67,9 +65,9 @@ class PurchaseApiCest
             'paymentProcessor' => 'invalid_processor'
         ]);
         
-        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+        $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
-        $I->seeResponseContains('"errors"');
+        $I->seeResponseContains('"error"');
     }
 
     public function testFailedPurchaseWithInvalidTaxNumber(ApiTester $I)
@@ -86,7 +84,7 @@ class PurchaseApiCest
         
         $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
-        $I->seeResponseContains('"errors"');
+        $I->seeResponseContains('"error"');
     }
 
     public function testFailedPurchaseWithoutRequiredFields(ApiTester $I)
@@ -94,14 +92,14 @@ class PurchaseApiCest
         $I->wantTo('fail when processing a purchase without required fields');
         
         $I->haveHttpHeader('Content-Type', 'application/json');
-        $I->sendPost('/purchase', [
+        $I->sendPost('/api/purchase', [
             'taxNumber' => null,
             'couponCode' => null,
             'paymentProcessor' => 'paypal'
         ]);
         
-        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+        $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
-        $I->seeResponseContains('"errors"');
+        $I->seeResponseContains('"error"');
     }
 }

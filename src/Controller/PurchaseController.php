@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Dto\PurchaseRequest;
+use App\Service\Interface\PriceCalculatorInterface;
+use App\Service\PaymentService;
 use App\Service\PurchaseProcessingService;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\Property;
@@ -16,6 +20,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class PurchaseController extends AbstractController
 {
     public function __construct(
+        private PriceCalculatorInterface $priceCalculator,
+        private PaymentService $paymentService,
     ) {
     }
 
@@ -43,8 +49,7 @@ class PurchaseController extends AbstractController
                 content: new OA\JsonContent(
                     properties: [
                         new Property(property: 'message', type: 'string', example: 'Purchase successful'),
-                        new Property(property: 'price', type: 'number', format: 'float', example: 122.0),
-                        new Property(property: 'currency', type: 'string', example: 'EUR')
+                        new Property(property: 'price', type: 'number', format: 'float', example: '122.00'),
                     ]
                 )
             ),
@@ -61,8 +66,9 @@ class PurchaseController extends AbstractController
     )]
     public function purchase(#[MapRequestPayload] PurchaseRequest $dto): JsonResponse
     {
-
-
-        return $this->json($dto);
+        $price = $this->priceCalculator->calculatePrice($dto->product, $dto->taxNumber, $dto->couponCode);
+        $paymentStatus = $this->paymentService->processPayment($price, $dto->paymentProcessor);
+        $price = number_format($price / 100, 2); //convert from minor to major units
+        return $this->json(['message' => $paymentStatus ? 'Purchase successful' : 'Purchase failed', 'price' => $price]);
     }
 }

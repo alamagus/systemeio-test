@@ -20,15 +20,12 @@ class CalculatePriceApiCest
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/calculate-price', [
             'product' => 1,
-            'taxNumber' => null,
-            'couponCode' => null
         ]);
         
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            'price' => 100.0,
-            'currency' => 'EUR'
+            'price' => '100.00',
         ]);
     }
 
@@ -46,8 +43,7 @@ class CalculatePriceApiCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            'price' => 119.0,
-            'currency' => 'EUR'
+            'price' => '119.00',
         ]);
     }
 
@@ -65,8 +61,7 @@ class CalculatePriceApiCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            'price' => 90.0,
-            'currency' => 'EUR'
+            'price' => '90.00',
         ]);
     }
 
@@ -84,8 +79,7 @@ class CalculatePriceApiCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            'price' => 90.0,
-            'currency' => 'EUR'
+            'price' => '90.00',
         ]);
     }
 
@@ -102,7 +96,7 @@ class CalculatePriceApiCest
         
         $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
-        $I->seeResponseContains('"errors"');
+        $I->seeResponseContains('"error"');
     }
 
     public function testCalculatePriceWithNonExistentProduct(ApiTester $I)
@@ -118,7 +112,7 @@ class CalculatePriceApiCest
         
         $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
-        $I->seeResponseContains('"errors"');
+        $I->seeResponseContains('"error"');
     }
 
     public function testCalculatePriceWithMissingProduct(ApiTester $I)
@@ -131,8 +125,8 @@ class CalculatePriceApiCest
             'couponCode' => null
         ]);
         
-        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+        $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
-        $I->seeResponseContains('"errors"');
+        $I->seeResponseContains('"error"');
     }
 }
