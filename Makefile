@@ -35,6 +35,15 @@ console: ## Login in console.
 install: ## Install dependencies without running the whole application.
 	${DC_RUN} composer install
 
+test:			##run tests
+	${DC_EXEC} bash -c "php bin/console --env=test doctrine:database:create --if-not-exists; \
+					 	php bin/console doctrine:migrations:migrate --env=test -n; \
+					 	php bin/console doctrine:fixtures:load --env=test -n --purge-with-truncate; \
+						vendor/bin/codecept clean; \
+						vendor/bin/codecept run;"
+
+
+
 success-message:
 	@echo "You can now access the application at http://localhost:8337"
 	@echo "Good luck! 🚀"
