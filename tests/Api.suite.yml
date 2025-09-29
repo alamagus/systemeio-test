@@ -1,0 +1,15 @@
+actor: ApiTester
+suite_namespace: App\Tests\Api
+modules:
+    enabled:
+        - Asserts
+        - Symfony:
+              app_path: 'src'
+              environment: 'test'
+        - REST:
+              url: /
+              depends: Symfony
+              part: Json
+        - Doctrine:
+              depends: Symfony
+              cleanup: true

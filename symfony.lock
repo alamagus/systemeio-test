@@ -1,4 +1,29 @@
 {
+    "codeception/codeception": {
+        "version": "5.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "5.0",
+            "ref": "0d213956834c5652a34e4bf9456ef26119132a8a"
+        },
+        "files": [
+            "codeception.yml",
+            "tests/Acceptance.suite.yml",
+            "tests/Acceptance/.gitignore",
+            "tests/Functional.suite.yml",
+            "tests/Functional/.gitignore",
+            "tests/Support/AcceptanceTester.php",
+            "tests/Support/Data/.gitignore",
+            "tests/Support/FunctionalTester.php",
+            "tests/Support/Helper/.gitignore",
+            "tests/Support/UnitTester.php",
+            "tests/Support/_generated/.gitignore",
+            "tests/Unit.suite.yml",
+            "tests/Unit/.gitignore",
+            "tests/_output/.gitignore"
+        ]
+    },
     "doctrine/deprecations": {
         "version": "1.1",
         "recipe": {
@@ -22,6 +47,18 @@
             "src/Repository/.gitignore"
         ]
     },
+    "doctrine/doctrine-fixtures-bundle": {
+        "version": "4.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.0",
+            "ref": "1f5514cfa15b947298df4d771e694e578d4c204d"
+        },
+        "files": [
+            "src/DataFixtures/AppFixtures.php"
+        ]
+    },
     "doctrine/doctrine-migrations-bundle": {
         "version": "3.4",
         "recipe": {
@@ -35,6 +72,18 @@
             "migrations/.gitignore"
         ]
     },
+    "happyr/entity-exists-validation-constraint": {
+        "version": "1.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "6bb4d395c4af35301599aec4f7b6810c3fb660cb"
+        },
+        "files": [
+            "config/packages/happyr_entity_exists_validator.yaml"
+        ]
+    },
     "nelmio/api-doc-bundle": {
         "version": "5.6",
         "recipe": {
@@ -46,6 +95,21 @@
         "files": [
             "config/packages/nelmio_api_doc.yaml",
             "config/routes/nelmio_api_doc.yaml"
+        ]
+    },
+    "phpunit/phpunit": {
+        "version": "12.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "11.1",
+            "ref": "c6658a60fc9d594805370eacdf542c3d6b5c0869"
+        },
+        "files": [
+            ".env.test",
+            "phpunit.dist.xml",
+            "tests/bootstrap.php",
+            "bin/phpunit"
         ]
     },
     "symfony/console": {
