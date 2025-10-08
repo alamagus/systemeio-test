@@ -10,13 +10,18 @@ PHONY: help
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-init: down build install up success-message console ## Initialize environment
+init: down build install up init-db success-message console ## Initialize environment
 
 build: ## Build services.
 	${DC} build $(c)
 
 up: ## Create and start services.
 	${DC} up -d $(c)
+
+init-db: ## Initialize database
+	${DC_EXEC} bash -c "php bin/console doctrine:database:create --if-not-exists; \
+					 	php bin/console doctrine:migrations:migrate -n; \
+					 	php bin/console doctrine:fixtures:load -n --purge-with-truncate;"
 
 stop: ## Stop services.
 	${DC} stop $(c)
@@ -35,8 +40,8 @@ console: ## Login in console.
 install: ## Install dependencies without running the whole application.
 	${DC_RUN} composer install
 
-test:			##run tests
-	${DC_EXEC} bash -c "php bin/console --env=test doctrine:database:create --if-not-exists; \
+test: ## Run tests
+	${DC_EXEC} bash -c "php bin/console doctrine:database:create --env=test --if-not-exists; \
 					 	php bin/console doctrine:migrations:migrate --env=test -n; \
 					 	php bin/console doctrine:fixtures:load --env=test -n --purge-with-truncate; \
 						vendor/bin/codecept clean; \
