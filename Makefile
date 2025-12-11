@@ -34,6 +34,9 @@ down: ## Stop and remove containers and volumes.
 
 restart: stop start ## Restart services.
 
+exec: ## Execute an arbitrary command passed from the CLI. Usage: make exec cmd="ls -la"
+	${DC_EXEC} $(cmd)
+
 console: ## Login in console.
 	${DC_EXEC} /bin/bash
 
@@ -44,8 +47,8 @@ test: ## Run tests
 	${DC_EXEC} bash -c "php bin/console doctrine:database:create --env=test --if-not-exists; \
 					 	php bin/console doctrine:migrations:migrate --env=test -n; \
 					 	php bin/console doctrine:fixtures:load --env=test -n --purge-with-truncate; \
-						vendor/bin/codecept clean; \
-						vendor/bin/codecept run;"
+						php -d register_argc_argv=On vendor/bin/codecept clean; \
+						php -d register_argc_argv=On vendor/bin/codecept run;"
 
 
 

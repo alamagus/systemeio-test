@@ -8,6 +8,7 @@ use App\Entity\Coupon;
 use App\Entity\Product;
 use App\Enum\CouponType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
@@ -17,6 +18,7 @@ class AppFixtures extends Fixture
         //disable autoincrement of ID, otherwise it's quite inconvenient to test
         $metadata = $manager->getClassMetaData(Product::class);
         $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
+        $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
 
         $products = [
             ['id' => 1, 'name' => 'Iphone', 'price' => 10000],      // 100 euros in cents
