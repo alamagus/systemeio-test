@@ -82,6 +82,7 @@
         "codeception/module-rest": "^3.4",
         "codeception/module-symfony": "^3.7",
         "doctrine/doctrine-fixtures-bundle": "^4.1",
+        "friendsofphp/php-cs-fixer": "^3.91",
         "symfony/maker-bundle": "^1.64"
     }
 }
