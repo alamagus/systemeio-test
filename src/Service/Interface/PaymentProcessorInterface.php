@@ -10,5 +10,6 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 interface PaymentProcessorInterface
 {
     public function processPayment(int $amount): bool;
+
     public static function getName(): string;
 }

@@ -25,7 +25,6 @@ class ExceptionListener
         $response = new JsonResponse();
         $response->setJson(json_encode(['error' => $message], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
-
         // HttpExceptionInterface is a special type of exception that
         // holds status code and header details
         if ($exception instanceof HttpExceptionInterface) {

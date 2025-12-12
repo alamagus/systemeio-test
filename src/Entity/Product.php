@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
-    //with introduction of Property hooks, there's no need in boilerplate setters and getters anymore
+    // with introduction of Property hooks, there's no need in boilerplate setters and getters anymore
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column]
     public int $id;
 

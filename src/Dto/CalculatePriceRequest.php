@@ -26,7 +26,6 @@ readonly class CalculatePriceRequest
         #[Assert\Type(type: 'string')]
         #[EntityExist(entity: Coupon::class, property: 'code')]
         public ?string $couponCode = null,
-    )
-    {
+    ) {
     }
 }

@@ -10,7 +10,7 @@ use Systemeio\TestForCandidates\PaymentProcessor\PaypalPaymentProcessor;
 readonly class PaypalPaymentProcessorAdapter implements PaymentProcessorInterface
 {
     public function __construct(
-        private PaypalPaymentProcessor $paypalProcessor
+        private PaypalPaymentProcessor $paypalProcessor,
     ) {
     }
 
@@ -18,6 +18,7 @@ readonly class PaypalPaymentProcessorAdapter implements PaymentProcessorInterfac
     {
         try {
             $this->paypalProcessor->pay($amount);
+
             return true;
         } catch (\Exception $e) {
             return false;

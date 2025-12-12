@@ -14,7 +14,7 @@ readonly class PurchaseRequest
 {
     public function __construct(
         #[Assert\Type(type: 'integer')]
-        #[Assert\NotBlank(message: "productId is required")]
+        #[Assert\NotBlank(message: 'productId is required')]
         #[Assert\Positive]
         #[EntityExist(entity: Product::class, property: 'id', message: 'Product with id: "%value%" does not exist.')]
         public ?int $productId = null,

@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[OA\Tag(name: "Price Calculator")]
+#[OA\Tag(name: 'Price Calculator')]
 #[Route('/api')]
 class CalculatePriceAction extends AbstractController
 {
@@ -28,7 +28,7 @@ class CalculatePriceAction extends AbstractController
                     properties: [
                         new Property(property: 'product', type: 'integer', example: 1),
                         new Property(property: 'taxNumber', type: 'string', example: 'DE276452187'),
-                        new Property(property: 'couponCode', type: 'string', example: 'P15')
+                        new Property(property: 'couponCode', type: 'string', example: 'P15'),
                     ]
                 )
             )
@@ -48,20 +48,20 @@ class CalculatePriceAction extends AbstractController
                 description: 'Validation error',
                 content: new OA\JsonContent(
                     properties: [
-                        new Property(property: 'errors', type: 'object')
+                        new Property(property: 'errors', type: 'object'),
                     ]
                 )
-            )
+            ),
         ]
     )]
     public function __invoke(
         #[MapRequestPayload] CalculatePriceRequest $dto,
         PriceCalculatorInterface $priceCalculator,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $price = $priceCalculator->calculatePrice($dto->product, $dto->taxNumber, $dto->couponCode);
 
-        $price = number_format($price / 100, 2); //convert from minor to major units
+        $price = number_format($price / 100, 2); // convert from minor to major units
+
         return $this->json((array) $dto + ['price' => $price]);
     }
 }

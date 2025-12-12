@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[OA\Tag(name: "Purchase Processor")]
+#[OA\Tag(name: 'Purchase Processor')]
 #[Route('/api')]
 class PurchaseAction extends AbstractController
 {
@@ -30,7 +30,7 @@ class PurchaseAction extends AbstractController
                         new Property(property: 'productId', type: 'integer', example: 1),
                         new Property(property: 'taxNumber', type: 'string', example: 'IT12345678900'),
                         new Property(property: 'couponCode', type: 'string', example: 'P15'),
-                        new Property(property: 'paymentProcessor', type: 'string', example: 'paypal')
+                        new Property(property: 'paymentProcessor', type: 'string', example: 'paypal'),
                     ]
                 )
             )
@@ -51,21 +51,21 @@ class PurchaseAction extends AbstractController
                 description: 'Validation error or payment failed',
                 content: new OA\JsonContent(
                     properties: [
-                        new Property(property: 'errors', type: 'object')
+                        new Property(property: 'errors', type: 'object'),
                     ]
                 )
-            )
+            ),
         ]
     )]
     public function __invoke(
         #[MapRequestPayload] PurchaseRequest $dto,
         PriceCalculatorInterface $priceCalculator,
         PaymentService $paymentService,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $price = $priceCalculator->calculatePrice($dto->productId, $dto->taxNumber, $dto->couponCode);
         $paymentStatus = $paymentService->processPayment($price, $dto->paymentProcessor);
-        $price = number_format($price / 100, 2); //convert from minor to major units
+        $price = number_format($price / 100, 2); // convert from minor to major units
+
         return $this->json(['message' => $paymentStatus ? 'Purchase successful' : 'Purchase failed', 'price' => $price]);
     }
 }

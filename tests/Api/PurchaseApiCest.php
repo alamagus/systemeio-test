@@ -16,15 +16,15 @@ class PurchaseApiCest
     public function testSuccessfulPurchaseWithPaypal(ApiTester $I)
     {
         $I->wantTo('successfully process a purchase with PayPal');
-        
+
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
             'productId' => 1,
             'taxNumber' => 'IT01234567890',
             'couponCode' => null,
-            'paymentProcessor' => 'paypal'
+            'paymentProcessor' => 'paypal',
         ]);
-        
+
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
@@ -36,15 +36,15 @@ class PurchaseApiCest
     public function testSuccessfulPurchaseWithStripe(ApiTester $I)
     {
         $I->wantTo('successfully process a purchase with Stripe');
-        
+
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
             'productId' => 1, // Higher value product for Stripe minimum
             'taxNumber' => 'FRXX123456789',
             'couponCode' => null,
-            'paymentProcessor' => 'stripe'
+            'paymentProcessor' => 'stripe',
         ]);
-        
+
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
@@ -56,15 +56,15 @@ class PurchaseApiCest
     public function testFailedPurchaseWithInvalidPaymentProcessor(ApiTester $I)
     {
         $I->wantTo('fail when processing a purchase with invalid payment processor');
-        
+
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
             'productId' => 1,
             'taxNumber' => 'DE276452187',
             'couponCode' => null,
-            'paymentProcessor' => 'invalid_processor'
+            'paymentProcessor' => 'invalid_processor',
         ]);
-        
+
         $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
         $I->seeResponseContains('"error"');
@@ -73,15 +73,15 @@ class PurchaseApiCest
     public function testFailedPurchaseWithInvalidTaxNumber(ApiTester $I)
     {
         $I->wantTo('fail when processing a purchase with invalid tax number');
-        
+
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
             'productId' => 1,
             'taxNumber' => 'INVALID123',
             'couponCode' => null,
-            'paymentProcessor' => 'paypal'
+            'paymentProcessor' => 'paypal',
         ]);
-        
+
         $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
         $I->seeResponseContains('"error"');
@@ -90,14 +90,14 @@ class PurchaseApiCest
     public function testFailedPurchaseWithoutRequiredFields(ApiTester $I)
     {
         $I->wantTo('fail when processing a purchase without required fields');
-        
+
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
             'taxNumber' => null,
             'couponCode' => null,
-            'paymentProcessor' => 'paypal'
+            'paymentProcessor' => 'paypal',
         ]);
-        
+
         $I->seeResponseCodeIs(HttpCode::UNPROCESSABLE_ENTITY);
         $I->seeResponseIsJson();
         $I->seeResponseContains('"error"');

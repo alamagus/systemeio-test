@@ -15,7 +15,7 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        //disable autoincrement of ID, otherwise it's quite inconvenient to test
+        // disable autoincrement of ID, otherwise it's quite inconvenient to test
         $metadata = $manager->getClassMetaData(Product::class);
         $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
         $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);

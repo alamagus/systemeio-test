@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Coupon
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column]
     public int $id;
 

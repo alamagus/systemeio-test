@@ -11,7 +11,6 @@ use App\Repository\CouponRepository;
 use App\Repository\ProductRepository;
 use App\Service\Interface\PriceCalculatorInterface;
 use BcMath\Number;
-use Override;
 
 readonly class PriceCalculator implements PriceCalculatorInterface
 {
@@ -21,10 +20,10 @@ readonly class PriceCalculator implements PriceCalculatorInterface
     ) {
     }
 
-    #[Override]
+    #[\Override]
     public function calculatePrice(int $productId, ?string $vatNumber, ?string $couponCode = null): int
     {
-        //TODO use moneyphp/money
+        // TODO use moneyphp/money
 
         /** @var Product $product */
         $product = $this->productRepository->find($productId);
@@ -34,11 +33,11 @@ readonly class PriceCalculator implements PriceCalculatorInterface
         }
 
         $finalPrice = new Number($product->price)
-            |> (fn($price) => $this->applyCoupon($couponCode, $price))
-            |> (fn($price) => $this->applyTax($vatNumber, $price))
+            |> (fn ($price) => $this->applyCoupon($couponCode, $price))
+            |> (fn ($price) => $this->applyTax($vatNumber, $price))
         ;
 
-        return (int)(string)$finalPrice->round();
+        return (int) (string) $finalPrice->round();
     }
 
     public function applyCoupon(?string $couponCode, Number $price): Number
@@ -48,7 +47,7 @@ readonly class PriceCalculator implements PriceCalculatorInterface
             $coupon = $this->couponRepository->findByCode($couponCode);
             if (null !== $coupon) {
                 $couponValue = new Number($coupon->value);
-                $discount = match($coupon->type) {
+                $discount = match ($coupon->type) {
                     CouponType::PERCENTAGE => $price * ($couponValue / 100),
                     CouponType::FIXED_AMOUNT => min($couponValue, $price), // Fixed discount, can't exceed the price
                 };

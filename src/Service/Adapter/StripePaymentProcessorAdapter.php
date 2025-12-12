@@ -10,7 +10,7 @@ use Systemeio\TestForCandidates\PaymentProcessor\StripePaymentProcessor;
 readonly class StripePaymentProcessorAdapter implements PaymentProcessorInterface
 {
     public function __construct(
-        private StripePaymentProcessor $stripeProcessor
+        private StripePaymentProcessor $stripeProcessor,
     ) {
     }
 
@@ -18,7 +18,7 @@ readonly class StripePaymentProcessorAdapter implements PaymentProcessorInterfac
     {
         try {
             // Stripe expects the amount as a float
-            return $this->stripeProcessor->processPayment((int)round($amount / 100, 2));
+            return $this->stripeProcessor->processPayment((int) round($amount / 100, 2));
         } catch (\Exception $e) {
             return false;
         }

@@ -29,7 +29,7 @@ class VatHelper
 
     public static function getCountryCode(string $vatNumber): ?string
     {
-        return array_find_key(self::COUNTRY_VATIN_PATTERNS, fn($pattern) => preg_match($pattern, $vatNumber));
+        return array_find_key(self::COUNTRY_VATIN_PATTERNS, fn ($pattern) => preg_match($pattern, $vatNumber));
     }
 
     public static function getVatRate(string $vatNumber): Number
