@@ -6,49 +6,67 @@ namespace App\Service;
 
 use App\Entity\Product;
 use App\Enum\CouponType;
+use App\Helper\VatHelper;
 use App\Repository\CouponRepository;
 use App\Repository\ProductRepository;
 use App\Service\Interface\PriceCalculatorInterface;
+use BcMath\Number;
+use Override;
 
-class PriceCalculator implements PriceCalculatorInterface
+readonly class PriceCalculator implements PriceCalculatorInterface
 {
     public function __construct(
         private ProductRepository $productRepository,
         private CouponRepository $couponRepository,
-        private TaxService $taxService
     ) {
     }
 
-    public function calculatePrice(int $productId, ?string $taxNumber, ?string $couponCode = null): int
+    #[Override]
+    public function calculatePrice(int $productId, ?string $vatNumber, ?string $couponCode = null): int
     {
-        //TODO use pipeline pattern
+        //TODO use moneyphp/money
 
         /** @var Product $product */
         $product = $this->productRepository->find($productId);
 
-        $resultPrice = $product->getPrice();
+        if (null === $product->price) {
+            throw new \RuntimeException("Product[id=$productId]'s price field shouldn't be null");
+        }
 
-        // Apply coupon discount if valid
+        $finalPrice = new Number($product->price)
+            |> (fn($price) => $this->applyCoupon($couponCode, $price))
+            |> (fn($price) => $this->applyTax($vatNumber, $price))
+        ;
+
+        return (int)(string)$finalPrice->round();
+    }
+
+    public function applyCoupon(?string $couponCode, Number $price): Number
+    {
         $discount = 0;
-        if ($couponCode) {
+        if (null !== $couponCode) {
             $coupon = $this->couponRepository->findByCode($couponCode);
-            if ($coupon) {
-                if ($coupon->getType() === CouponType::PERCENTAGE) {
-                    $discount = $resultPrice * ($coupon->getValue() / 100);
-                } elseif ($coupon->getType() === CouponType::FIXED_AMOUNT) {
-                    $discount = min($coupon->getValue(), $resultPrice); // Fixed discount, can't exceed the price
-                }
+            if (null !== $coupon) {
+                $couponValue = new Number($coupon->value);
+                $discount = match($coupon->type) {
+                    CouponType::PERCENTAGE => $price * ($couponValue / 100),
+                    CouponType::FIXED_AMOUNT => min($couponValue, $price), // Fixed discount, can't exceed the price
+                };
             }
         }
 
-        $discountedPrice = $resultPrice - $discount;
+        return $price - $discount;
+    }
 
-        // Apply tax if tax number provided
+    public function applyTax(?string $vatNumber, Number $price): Number
+    {
         $taxRate = 0;
-        if ($taxNumber) {
-            $taxRate = $this->taxService->getTaxRate($taxNumber);
+        if (null !== $vatNumber) {
+            $taxRate = VatHelper::getVatRate($vatNumber);
         }
 
-        return (int)round($discountedPrice * (1 + $taxRate));
+        $price *= (1 + $taxRate);
+
+        return $price;
     }
 }

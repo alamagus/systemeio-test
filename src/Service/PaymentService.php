@@ -6,36 +6,23 @@ namespace App\Service;
 
 use App\Service\Interface\PaymentProcessorInterface;
 use Exception;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 
-class PaymentService
+readonly class PaymentService
 {
-    /**
-     * @var PaymentProcessorInterface[]
-     */
-    private array $processors;
-
     public function __construct(
-        PaymentProcessorInterface ...$processors
+        #[AutowireLocator(PaymentProcessorInterface::class, defaultIndexMethod: 'getName')]
+        private ContainerInterface $processors,
     ) {
-        foreach ($processors as $processor) {
-            $this->processors[$processor->getName()] = $processor;
-        }
     }
 
     public function processPayment(int $amount, string $processorName): bool
     {
-        if (!isset($this->processors[$processorName])) {
+        if (!$this->processors->has($processorName)) {
             throw new Exception('Invalid payment processor name');
         }
 
-        return $this->processors[$processorName]->processPayment($amount);
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getAvailableProcessors(): array
-    {
-        return array_keys($this->processors);
+        return $this->processors->get($processorName)->processPayment($amount);
     }
 }

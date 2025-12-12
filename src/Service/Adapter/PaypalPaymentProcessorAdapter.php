@@ -7,7 +7,7 @@ namespace App\Service\Adapter;
 use App\Service\Interface\PaymentProcessorInterface;
 use Systemeio\TestForCandidates\PaymentProcessor\PaypalPaymentProcessor;
 
-class PaypalPaymentProcessorAdapter implements PaymentProcessorInterface
+readonly class PaypalPaymentProcessorAdapter implements PaymentProcessorInterface
 {
     public function __construct(
         private PaypalPaymentProcessor $paypalProcessor
@@ -24,7 +24,7 @@ class PaypalPaymentProcessorAdapter implements PaymentProcessorInterface
         }
     }
 
-    public function getName(): string
+    public static function getName(): string
     {
         return 'paypal';
     }

@@ -9,7 +9,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
-class TaxValidator extends ConstraintValidator
+class VatValidator extends ConstraintValidator
 {
 
     /**
@@ -17,8 +17,8 @@ class TaxValidator extends ConstraintValidator
      */
     public function validate(mixed $value, Constraint $constraint)
     {
-        if (!$constraint instanceof Tax) {
-            throw new UnexpectedTypeException($constraint, Tax::class);
+        if (!$constraint instanceof Vat) {
+            throw new UnexpectedTypeException($constraint, Vat::class);
         }
 
         // custom constraints should ignore null and empty values to allow
@@ -35,7 +35,7 @@ class TaxValidator extends ConstraintValidator
             // throw new UnexpectedValueException($value, 'string|int');
         }
 
-        if (null === \App\Service\TaxService::getCountryCode($value)) {
+        if (null === \App\Helper\VatHelper::getCountryCode($value)) {
             $this->context
                 ->buildViolation($constraint->message)
                 ->setParameter('{{ string }}', $value)

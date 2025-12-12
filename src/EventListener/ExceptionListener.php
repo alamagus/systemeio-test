@@ -13,15 +13,15 @@ class ExceptionListener
 {
     public function __invoke(ExceptionEvent $event): void
     {
-        // You get the exception object from the received event
+        // Get the exception object from the received event
         $exception = $event->getThrowable();
         $message = sprintf(
-            'Error: %s with code: %s',
+            '%s with code: %s',
             $exception->getMessage(),
             $exception->getCode()
         );
 
-        // Customize your response object to display the exception details
+        // Customize response object to display the exception details
         $response = new JsonResponse();
         $response->setJson(json_encode(['error' => $message], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 

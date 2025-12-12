@@ -32,9 +32,9 @@ class AppFixtures extends Fixture
 
             if (!$existingProduct) {
                 $product = new Product();
-                $product->setId($productData['id']);
-                $product->setName($productData['name']);
-                $product->setPrice($productData['price']);
+                $product->id = $productData['id'];
+                $product->name = $productData['name'];
+                $product->price = $productData['price'];
                 $manager->persist($product);
             }
         }
@@ -53,9 +53,9 @@ class AppFixtures extends Fixture
 
             if (!$existingCoupon) {
                 $coupon = new Coupon();
-                $coupon->setCode($couponData['code']);
-                $coupon->setType($couponData['type']);
-                $coupon->setValue($couponData['value']);
+                $coupon->code = $couponData['code'];
+                $coupon->type = $couponData['type'];
+                $coupon->value = $couponData['value'];
                 $manager->persist($coupon);
             }
         }

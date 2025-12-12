@@ -15,13 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 #[OA\Tag(name: "Price Calculator")]
 #[Route('/api')]
-class PriceCalculatorAction extends AbstractController
+class CalculatePriceAction extends AbstractController
 {
-    public function __construct(
-        private PriceCalculatorInterface $priceCalculator
-    ) {
-    }
-
     #[Route('/calculate-price', name: 'calculate_price', methods: ['POST'])]
     #[OA\Post(
         summary: 'Calculate the final price of a product including tax and discounts',
@@ -44,8 +39,7 @@ class PriceCalculatorAction extends AbstractController
                 description: 'Successfully calculated price',
                 content: new OA\JsonContent(
                     properties: [
-                        new Property(property: 'price', type: 'number', format: 'float', example: '101.15'),
-                        new Property(property: 'currency', type: 'string', example: 'EUR')
+                        new Property(property: 'price', type: 'number', format: 'decimal', example: '101.15'),
                     ]
                 )
             ),
@@ -60,9 +54,12 @@ class PriceCalculatorAction extends AbstractController
             )
         ]
     )]
-    public function calculatePrice(#[MapRequestPayload] CalculatePriceRequest $dto): JsonResponse
+    public function __invoke(
+        #[MapRequestPayload] CalculatePriceRequest $dto,
+        PriceCalculatorInterface $priceCalculator,
+    ): JsonResponse
     {
-        $price = $this->priceCalculator->calculatePrice($dto->product, $dto->taxNumber, $dto->couponCode);
+        $price = $priceCalculator->calculatePrice($dto->product, $dto->taxNumber, $dto->couponCode);
 
         $price = number_format($price / 100, 2); //convert from minor to major units
         return $this->json((array) $dto + ['price' => $price]);

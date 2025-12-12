@@ -7,9 +7,9 @@ namespace App\Validator;
 use Symfony\Component\Validator\Constraint;
 
 #[\Attribute]
-class Tax extends Constraint
+class Vat extends Constraint
 {
-    public string $message = 'The tax value "{{ string }}" is invalid';
+    public string $message = 'The VAT value "{{ string }}" is invalid';
 
     public function __construct(?string $message = null, mixed $options = null, ?array $groups = null, mixed $payload = null)
     {

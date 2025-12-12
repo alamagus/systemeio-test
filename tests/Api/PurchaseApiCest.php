@@ -19,7 +19,7 @@ class PurchaseApiCest
         
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
-            'product' => 1,
+            'productId' => 1,
             'taxNumber' => 'IT01234567890',
             'couponCode' => null,
             'paymentProcessor' => 'paypal'
@@ -39,7 +39,7 @@ class PurchaseApiCest
         
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
-            'product' => 1, // Higher value product for Stripe minimum
+            'productId' => 1, // Higher value product for Stripe minimum
             'taxNumber' => 'FRXX123456789',
             'couponCode' => null,
             'paymentProcessor' => 'stripe'
@@ -59,7 +59,7 @@ class PurchaseApiCest
         
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
-            'product' => 1,
+            'productId' => 1,
             'taxNumber' => 'DE276452187',
             'couponCode' => null,
             'paymentProcessor' => 'invalid_processor'
@@ -76,7 +76,7 @@ class PurchaseApiCest
         
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPost('/api/purchase', [
-            'product' => 1,
+            'productId' => 1,
             'taxNumber' => 'INVALID123',
             'couponCode' => null,
             'paymentProcessor' => 'paypal'

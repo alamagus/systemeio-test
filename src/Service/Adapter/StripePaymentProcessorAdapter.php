@@ -7,7 +7,7 @@ namespace App\Service\Adapter;
 use App\Service\Interface\PaymentProcessorInterface;
 use Systemeio\TestForCandidates\PaymentProcessor\StripePaymentProcessor;
 
-class StripePaymentProcessorAdapter implements PaymentProcessorInterface
+readonly class StripePaymentProcessorAdapter implements PaymentProcessorInterface
 {
     public function __construct(
         private StripePaymentProcessor $stripeProcessor
@@ -24,7 +24,7 @@ class StripePaymentProcessorAdapter implements PaymentProcessorInterface
         }
     }
 
-    public function getName(): string
+    public static function getName(): string
     {
         return 'stripe';
     }

@@ -7,7 +7,6 @@ namespace App\Controller;
 use App\Dto\PurchaseRequest;
 use App\Service\Interface\PriceCalculatorInterface;
 use App\Service\PaymentService;
-use App\Service\PurchaseProcessingService;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\Property;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,14 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 #[OA\Tag(name: "Purchase Processor")]
 #[Route('/api')]
-class PurchaseController extends AbstractController
+class PurchaseAction extends AbstractController
 {
-    public function __construct(
-        private PriceCalculatorInterface $priceCalculator,
-        private PaymentService $paymentService,
-    ) {
-    }
-
     #[Route('/purchase', name: 'purchase', methods: ['POST'])]
     #[OA\Post(
         summary: 'Process a purchase with payment',
@@ -34,7 +27,7 @@ class PurchaseController extends AbstractController
                 mediaType: 'application/json',
                 schema: new OA\Schema(
                     properties: [
-                        new Property(property: 'product', type: 'integer', example: 1),
+                        new Property(property: 'productId', type: 'integer', example: 1),
                         new Property(property: 'taxNumber', type: 'string', example: 'IT12345678900'),
                         new Property(property: 'couponCode', type: 'string', example: 'P15'),
                         new Property(property: 'paymentProcessor', type: 'string', example: 'paypal')
@@ -49,7 +42,7 @@ class PurchaseController extends AbstractController
                 content: new OA\JsonContent(
                     properties: [
                         new Property(property: 'message', type: 'string', example: 'Purchase successful'),
-                        new Property(property: 'price', type: 'number', format: 'float', example: '122.00'),
+                        new Property(property: 'price', type: 'number', format: 'decimal', example: '122.00'),
                     ]
                 )
             ),
@@ -64,10 +57,14 @@ class PurchaseController extends AbstractController
             )
         ]
     )]
-    public function purchase(#[MapRequestPayload] PurchaseRequest $dto): JsonResponse
+    public function __invoke(
+        #[MapRequestPayload] PurchaseRequest $dto,
+        PriceCalculatorInterface $priceCalculator,
+        PaymentService $paymentService,
+    ): JsonResponse
     {
-        $price = $this->priceCalculator->calculatePrice($dto->product, $dto->taxNumber, $dto->couponCode);
-        $paymentStatus = $this->paymentService->processPayment($price, $dto->paymentProcessor);
+        $price = $priceCalculator->calculatePrice($dto->productId, $dto->taxNumber, $dto->couponCode);
+        $paymentStatus = $paymentService->processPayment($price, $dto->paymentProcessor);
         $price = number_format($price / 100, 2); //convert from minor to major units
         return $this->json(['message' => $paymentStatus ? 'Purchase successful' : 'Purchase failed', 'price' => $price]);
     }
